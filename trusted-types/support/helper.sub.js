@@ -31,6 +31,14 @@ function createURLJS(url) {
       .replace("an.url", "successfully.transformed");
 }
 
+// When testing location.href (& friends), we have the problem that assigning
+// to the new location will navigate away from the test. To fix this, we'll
+// have a policy that will just stick the argument into the fragment identifier
+// of the current location.href.
+function createLocationURLJS(value) {
+  return location.href.replace(/#.*/g, "") + "#" + value;
+}
+
 function createHTML_policy(win, c) {
   return win.TrustedTypes.createPolicy('SomeHTMLPolicyName' + c, { createHTML: createHTMLJS });
 }
