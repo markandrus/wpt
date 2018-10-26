@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-scroll-snap-1" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/gesture-util.js"></script>
+<style>
+div {
+  position: absolute;
+}
+:root {
+  overflow: scroll;
+  scroll-snap-type: both mandatory;
+}
+.scroller {
+  overflow: scroll;
+  scroll-snap-type: both mandatory;
+  padding: 0px;
+}
+#outer {
+  scroll-snap-align: end;
+  left: 1000px;
+  top: 1000px;
+  width: 600px;
+  height: 600px;
+}
+#inner {
+  scroll-snap-align: end;
+  left: 1000px;
+  top: 1000px;
+  width: 400px;
+  height: 400px;
+}
+.space {
+  left: 0px;
+  top: 0px;
+  width: 3000px;
+  height: 3000px;
+}
+.origin {
+  scroll-snap-align: start;
+  left: 0px;
+  top: 0px;
+  width: 200px;
+  height: 200px;
+}
+#target {
+  scroll-snap-align: end;
+  left: 800px;
+  top: 800px;
+  width: 200px;
+  height: 200px;
+}
+</style>
+
+<div class="space"></div>
+<div class="origin"></div>
+<div class="scroller" id="outer">
+  <div class="space"></div>
+  <div class="origin"></div>
+  <div class="scroller" id="inner">
+    <div class="space"></div>
+    <div class="origin"></div>
+    <div id="target"></div>
+  </div>
+</div>
+
+<script>
+var outer = document.getElementById("outer");
+var inner = document.getElementById("inner");
+var target = document.getElementById("target");
+
+test(() => {
+  window.scrollTo(0, 0);
+  outer.scrollTo(0, 0);
+  inner.scrollTo(0, 0);
+  assert_equals(window.scrollX, 0);
+  assert_equals(window.scrollY, 0);
+  assert_equals(outer.scrollLeft, 0);
+  assert_equals(outer.scrollTop, 0);
+  assert_equals(inner.scrollLeft, 0);
+  assert_equals(inner.scrollTop, 0);
+
+  target.scrollIntoView({inline: "start", block: "start"});
+  assert_equals(inner.scrollLeft, 1000 - inner.clientWidth);
+  assert_equals(inner.scrollTop, 1000 - inner.clientHeight);
+
+  assert_equals(outer.scrollLeft, 1400 - outer.clientWidth);
+  assert_equals(outer.scrollTop, 1400 - outer.clientHeight);
+
+  assert_equals(window.scrollX, 1600 - document.documentElement.clientWidth);
+  assert_equals(window.scrollY, 1600 - document.documentElement.clientHeight);
+}, "All the scrollers affected by scrollIntoView should land on a snap position if one exists.");
+</script>
