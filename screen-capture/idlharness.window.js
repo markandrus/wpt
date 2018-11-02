@@ -10,7 +10,7 @@ idl_test(
   ['mediacapture-streams', 'html'],
   idl_array => {
     idl_array.add_objects({
-      Navigator: ['navigator'],
+      MediaDevices: ['navigator.mediaDevices'],
     });
   }
 );
